@@ -94,7 +94,7 @@ Plan:
 
     research_data = ""
 
-    for q in queries[:2]:  # limit to 2 for speed
+    for q in queries[:3]:  # limit to 2 for speed
         research_data += f"\nSearch Results for: {q.strip()}\n"
         research_data += web_search(q.strip())
         research_data += "\n\n"
@@ -111,7 +111,7 @@ def writer_agent(topic, research_data):
 You are a professional research analyst.
 
 Using the topic and research data below,
-write a structured research report between 700–900 words.
+write a structured research report :
 
 Include:
 1. Executive Summary
