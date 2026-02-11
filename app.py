@@ -10,6 +10,13 @@ from fpdf import FPDF
 if "history" not in st.session_state:
     st.session_state.history = []
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+if "current_report" not in st.session_state:
+    st.session_state.current_report = ""
+
+
 # ===============================
 # CONFIG
 # ===============================
@@ -200,6 +207,8 @@ if st.button("Generate Advanced Report"):
 
         st.subheader(" Final Research Report")
         st.write(final_report)
+        st.session_state.current_report = final_report
+
 
         # Save to history safely
         st.session_state.history.append({
@@ -217,6 +226,46 @@ if st.button("Generate Advanced Report"):
                 file_name="AI_Research_Report.pdf",
                 mime="application/pdf"
             )
+# ===============================
+# FOLLOW-UP CHAT MODE
+# ===============================
+
+if st.session_state.current_report:
+
+    st.markdown("---")
+    st.subheader(" Refine or Ask Follow-up")
+
+    follow_up = st.text_input("Ask something about this report")
+
+    if st.button("Refine Report") and follow_up:
+
+        refine_prompt = f"""
+You are a research assistant.
+
+Original Report:
+{st.session_state.current_report}
+
+User Request:
+{follow_up}
+
+Update or refine the report accordingly.
+Return full updated version.
+"""
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": refine_prompt}],
+            temperature=0.4,
+            max_tokens=1200
+        )
+
+        updated_report = response.choices[0].message.content
+
+        st.session_state.current_report = updated_report
+        st.session_state.chat_history.append((follow_up, updated_report))
+
+        st.subheader(" Updated Report")
+        st.write(updated_report)
 
 
 # ===============================
@@ -227,7 +276,7 @@ st.sidebar.title("📚 Research History")
 if st.session_state.history:
     for i, item in enumerate(st.session_state.history):
         if st.sidebar.button(item["topic"], key=f"history_{i}"):
-            st.subheader(f"📄 Previous Report: {item['topic']}")
+            st.subheader(f" Previous Report: {item['topic']}")
             st.write(item["report"])
 else:
     st.sidebar.write("No research history yet.")
