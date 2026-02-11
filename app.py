@@ -76,7 +76,7 @@ Return them as a Python list.
 
     research_data = ""
 
-    for q in queries[:3]:
+    for q in queries[:2]:
         research_data += f"\nSearch Results for: {q.strip()}\n"
         research_data += web_search(q.strip())
         research_data += "\n\n"
@@ -97,7 +97,9 @@ TOPIC:
 RESEARCH DATA:
 {research_data}
 
-Write a structured research report with:
+Write a structured professional research report 
+between 700–900 words with:
+
 
 1. Executive Summary
 2. Background
@@ -129,14 +131,23 @@ topic = st.text_input("Enter Research Topic")
 
 if st.button("Generate Advanced Report"):
 
-    with st.spinner(" Planner Agent thinking..."):
-        plan = planner_agent(topic)
+    progress = st.progress(0)
+    status = st.empty()
 
-    with st.spinner(" Research Agent searching..."):
-        research = research_agent(plan)
+    status.write(" Planner Agent analyzing topic...")
+    progress.progress(20)
+    plan = planner_agent(topic)
 
-    with st.spinner(" Writer Agent composing final report..."):
-        final_report = writer_agent(topic, research)
+    status.write(" Research Agent gathering sources...")
+    progress.progress(50)
+    research = research_agent(plan)
 
-    st.subheader("Final Research Report")
+    status.write(" Writer Agent composing structured report...")
+    progress.progress(80)
+    final_report = writer_agent(topic, research)
+
+    progress.progress(100)
+    status.write(" Report generation complete!")
+
+    st.subheader(" Final Research Report")
     st.write(final_report)
