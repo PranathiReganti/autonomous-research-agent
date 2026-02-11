@@ -201,10 +201,17 @@ if st.button("Generate Advanced Report"):
 
         st.subheader(" Final Research Report")
         st.write(final_report)
-        # Save to history
+
+
+        # Save to session state
+if "history" not in st.session_state:
+    st.session_state.history = []
+
 st.session_state.history.append({
     "topic": topic,
-    "report": final_report})
+    "report": final_report
+})
+
 
 pdf_path = generate_pdf(final_report)
 
@@ -218,7 +225,7 @@ with open(pdf_path, "rb") as f:
 # ===============================
 # SIDEBAR HISTORY
 # ===============================
-st.sidebar.title("📚 Research History")
+st.sidebar.title("Research History")
 
 if st.session_state.history:
     for i, item in enumerate(st.session_state.history):
