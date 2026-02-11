@@ -16,12 +16,12 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 st.set_page_config(page_title="Autonomous Research Agent", layout="wide")
 
-st.title("🤖 Autonomous Research Agent")
+st.title(" Autonomous Research Agent")
 st.write("Generate structured research reports with real-time web sources and download as PDF.")
 
 
 # ---------------------------
-# 🔍 Web Search Function
+#  Web Search Function
 # ---------------------------
 def search_web(query):
     url = "https://google.serper.dev/search"
@@ -55,7 +55,7 @@ def search_web(query):
 
 
 # ---------------------------
-# 🧠 Generate Research Plan
+#  Generate Research Plan
 # ---------------------------
 def generate_plan(topic):
     response = client.chat.completions.create(
@@ -75,7 +75,7 @@ Only return section titles in numbered format.
 
 
 # ---------------------------
-# ✍ Expand Each Section
+#  Expand Each Section
 # ---------------------------
 def expand_section(topic, section_title):
     search_results, sources = search_web(f"{topic} {section_title}")
@@ -101,7 +101,7 @@ Write a detailed, factual section based only on the search results.
 
 
 # ---------------------------
-# 📄 PDF Generator
+#  PDF Generator
 # ---------------------------
 def generate_pdf(content):
     buffer = BytesIO()
@@ -119,24 +119,24 @@ def generate_pdf(content):
 
 
 # ---------------------------
-# 🚀 UI Logic
+# UI Logic
 # ---------------------------
 
 topic = st.text_input("Enter Research Topic")
 
 if st.button("Generate Report") and topic:
 
-    st.subheader("📌 Generating Research Plan...")
+    st.subheader(" Generating Research Plan...")
     plan = generate_plan(topic)
     sections = plan.split("\n")
 
-    st.markdown("## 📋 Research Plan")
+    st.markdown("##  Research Plan")
     st.write(plan)
 
     all_sources = []
     full_text_report = f"Research Report on {topic}\n\n"
 
-    st.markdown("## 📄 Detailed Report")
+    st.markdown("##  Detailed Report")
 
     for section in sections:
         if section.strip() != "":
@@ -150,7 +150,7 @@ if st.button("Generate Report") and topic:
     # Remove duplicate sources
     unique_sources = list(set(all_sources))
 
-    st.markdown("## 🔗 References")
+    st.markdown("##  References")
 
     for idx, (title, link) in enumerate(unique_sources, 1):
         st.markdown(f"{idx}. [{title}]({link})")
@@ -160,7 +160,7 @@ if st.button("Generate Report") and topic:
     pdf_file = generate_pdf(full_text_report)
 
     st.download_button(
-        label="📥 Download Report as PDF",
+        label=" Download Report as PDF",
         data=pdf_file,
         file_name="research_report.pdf",
         mime="application/pdf"

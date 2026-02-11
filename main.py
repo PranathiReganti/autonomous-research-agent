@@ -11,7 +11,7 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 # ---------------------------
-# 🔍 Web Search Function
+#  Web Search Function
 # ---------------------------
 def search_web(query):
     url = "https://google.serper.dev/search"
@@ -45,7 +45,7 @@ def search_web(query):
 
 
 # ---------------------------
-# 🧠 Generate Research Plan
+#  Generate Research Plan
 # ---------------------------
 def generate_plan(topic):
     response = client.chat.completions.create(
@@ -66,7 +66,7 @@ Only return section titles in numbered format.
 
 
 # ---------------------------
-# ✍ Expand Each Section
+#  Expand Each Section
 # ---------------------------
 def expand_section(topic, section_title):
     search_results, sources = search_web(f"{topic} {section_title}")
@@ -92,7 +92,7 @@ Write a detailed, factual section based only on the search results.
 
 
 # ---------------------------
-# 🚀 Main Execution
+#  Main Execution
 # ---------------------------
 if __name__ == "__main__":
     topic = input("Enter research topic: ")
