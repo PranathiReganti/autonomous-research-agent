@@ -5,6 +5,13 @@ from groq import Groq
 from fpdf import FPDF
 
 # ===============================
+# SESSION STATE FOR MEMORY
+# ===============================
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+
+# ===============================
 # CONFIG
 # ===============================
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -194,13 +201,30 @@ if st.button("Generate Advanced Report"):
 
         st.subheader(" Final Research Report")
         st.write(final_report)
+        # Save to history
+st.session_state.history.append({
+    "topic": topic,
+    "report": final_report})
 
-        pdf_path = generate_pdf(final_report)
+pdf_path = generate_pdf(final_report)
 
-        with open(pdf_path, "rb") as f:
+with open(pdf_path, "rb") as f:
             st.download_button(
                 label=" Download as PDF",
                 data=f,
                 file_name="AI_Research_Report.pdf",
                 mime="application/pdf"
             )
+# ===============================
+# SIDEBAR HISTORY
+# ===============================
+st.sidebar.title("📚 Research History")
+
+if st.session_state.history:
+    for i, item in enumerate(st.session_state.history):
+        if st.sidebar.button(item["topic"], key=i):
+            st.subheader(f"📄 Previous Report: {item['topic']}")
+            st.write(item["report"])
+else:
+    st.sidebar.write("No research history yet.")
+
