@@ -10,7 +10,6 @@ from fpdf import FPDF
 if "history" not in st.session_state:
     st.session_state.history = []
 
-
 # ===============================
 # CONFIG
 # ===============================
@@ -60,7 +59,7 @@ Break the topic into:
 
 Return:
 - Research Outline
-- Search Queries (as comma-separated list)
+- Search Queries (comma separated)
 - Suggested Report Sections
 
 Topic: {topic}
@@ -82,8 +81,8 @@ Topic: {topic}
 def research_agent(plan):
 
     search_prompt = f"""
-From the plan below, extract only the search queries.
-Return them as comma-separated list only.
+From the plan below, extract ONLY the search queries.
+Return them as comma-separated list.
 
 Plan:
 {plan}
@@ -101,7 +100,7 @@ Plan:
 
     research_data = ""
 
-    for q in queries[:3]:  # limit to 2 for speed
+    for q in queries[:2]:  # limit to 2 for speed
         research_data += f"\nSearch Results for: {q.strip()}\n"
         research_data += web_search(q.strip())
         research_data += "\n\n"
@@ -118,7 +117,7 @@ def writer_agent(topic, research_data):
 You are a professional research analyst.
 
 Using the topic and research data below,
-write a structured research report :
+write a structured research report.
 
 Include:
 1. Executive Summary
@@ -202,36 +201,33 @@ if st.button("Generate Advanced Report"):
         st.subheader(" Final Research Report")
         st.write(final_report)
 
+        # Save to history safely
+        st.session_state.history.append({
+            "topic": topic,
+            "report": final_report
+        })
 
-        # Save to session state
-if "history" not in st.session_state:
-    st.session_state.history = []
+        # Generate PDF safely
+        pdf_path = generate_pdf(final_report)
 
-st.session_state.history.append({
-    "topic": topic,
-    "report": final_report
-})
-
-
-pdf_path = generate_pdf(final_report)
-
-with open(pdf_path, "rb") as f:
+        with open(pdf_path, "rb") as f:
             st.download_button(
                 label=" Download as PDF",
                 data=f,
                 file_name="AI_Research_Report.pdf",
                 mime="application/pdf"
             )
+
+
 # ===============================
 # SIDEBAR HISTORY
 # ===============================
-st.sidebar.title("Research History")
+st.sidebar.title("📚 Research History")
 
 if st.session_state.history:
     for i, item in enumerate(st.session_state.history):
-        if st.sidebar.button(item["topic"], key=i):
+        if st.sidebar.button(item["topic"], key=f"history_{i}"):
             st.subheader(f"📄 Previous Report: {item['topic']}")
             st.write(item["report"])
 else:
     st.sidebar.write("No research history yet.")
-
